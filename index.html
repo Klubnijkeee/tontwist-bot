@@ -33,10 +33,24 @@
       font-size: 18px;
       margin-top: 20px;
     }
+    .bet-options {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>Подбросить монетку</h1>
+  <h1>Подбросить монетку2</h1>
+  <div class="bet-options">
+    <label for="betAmount">Ставка (TON):</label>
+    <input type="number" id="betAmount" min="1" step="1">
+  </div>
+  <div class="bet-options">
+    <label for="betChoice">Выбор:</label>
+    <select id="betChoice">
+      <option value="Орёл">Орёл</option>
+      <option value="Решка">Решка</option>
+    </select>
+  </div>
   <button id="flipButton">Подбросить</button>
   <p id="result"></p>
 
@@ -44,11 +58,18 @@
     document.addEventListener('DOMContentLoaded', (event) => {
       const flipButton = document.getElementById('flipButton');
       const result = document.getElementById('result');
+      const betAmount = document.getElementById('betAmount');
+      const betChoice = document.getElementById('betChoice');
 
       flipButton.addEventListener('click', () => {
         const flipResult = Math.random() < 0.5 ? 'Орёл' : 'Решка';
+        const bet = {
+          amount: betAmount.value,
+          choice: betChoice.value,
+          result: flipResult
+        };
         result.textContent = Выпало: ${flipResult};
-        Telegram.WebApp.sendData(flipResult);
+        Telegram.WebApp.sendData(JSON.stringify(bet));
       });
 
       Telegram.WebApp.ready();
