@@ -1,8 +1,9 @@
 const { Telegraf, Markup } = require('telegraf');
 const express = require('express');
 const path = require('path');
+const bodyParser = require('body-parser');
 const app = express();
-const bot = new Telegraf('8052531741:AAEgtrQtk8X_sNmpBItC9aOGyUR06k6Hq68');
+const bot = new Telegraf('YOUR_API_TOKEN');
 
 let userBets = {};
 
@@ -13,40 +14,33 @@ bot.start((ctx) => {
 });
 
 bot.action('start_bet', (ctx) => {
-  ctx.reply('Выберите ставку:', Markup.inlineKeyboard([
-    [Markup.button.callback('Орёл', 'bet_heads')],
-    [Markup.button.callback('Решка', 'bet_tails')]
-  ]));
+  ctx.reply('Выберите ставку и исход события в мини-приложении.');
 });
 
-bot.action(['bet_heads', 'bet_tails'], (ctx) => {
-  const userId = ctx.from.id;
-  const bet = ctx.match.input.split('_')[1];
+app.use(express.static(path.join(__dirname, 'webapp')));
+app.use(bodyParser.json());
+
+app.post('/webapp-data', (req, res) => {
+  const { userId, bet } = req.body;
   userBets[userId] = bet;
-  ctx.reply(`Ты поставил на ${bet}. Подбросить монетку?`, Markup.inlineKeyboard([
-    [Markup.button.callback('Подбросить монетку', 'flip_coin')]
-  ]));
+  res.sendStatus(200);
 });
 
-bot.action('flip_coin', (ctx) => {
+bot.on('web_app_data', (ctx) => {
   const userId = ctx.from.id;
-  const result = Math.random() < 0.5 ? 'Орёл' : 'Решка';
-  const bet = userBets[userId];
+  const bet = JSON.parse(ctx.message.web_app_data.data);
+  const result = bet.result;
+  const choice = bet.choice;
+  const amount = bet.amount;
 
-  if (bet) {
-    if (bet === result) {
-      ctx.reply(`Выпало: ${result}. Ты выиграл!`);
-    } else {
-      ctx.reply(`Выпало: ${result}. Ты проиграл.`);
-    }
+  if (choice === result) {
+    ctx.reply(`Выпало: ${result}. Ты выиграл ${amount} TON!`);
   } else {
-    ctx.reply(`Выпало: ${result}. Ставка не найдена.`);
+    ctx.reply(`Выпало: ${result}. Ты проиграл ${amount} TON.`);
   }
 });
 
 bot.launch();
-
-app.use(express.static(path.join(__dirname, 'webapp')));
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
