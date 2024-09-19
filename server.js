@@ -5,9 +5,13 @@ const bodyParser = require('body-parser');
 const app = express();
 const bot = new Telegraf('8052531741:AAEgtrQtk8X_sNmpBItC9aOGyUR06k6Hq68');
 
-let userBets = {};
+let userBalances = {};
 
 bot.start((ctx) => {
+  const userId = ctx.from.id;
+  if (!userBalances[userId]) {
+    userBalances[userId] = 100; // Начальный баланс
+  }
   ctx.reply('Добро пожаловать! Нажмите кнопку ниже, чтобы сделать ставку и подбросить монетку.', Markup.inlineKeyboard([
     [Markup.button.callback('Сделать ставку', 'start_bet')]
   ]));
@@ -22,7 +26,14 @@ app.use(bodyParser.json());
 
 app.post('/webapp-data', (req, res) => {
   const { userId, bet } = req.body;
-  userBets[userId] = bet;
+  const userBalance = userBalances[userId];
+
+  if (bet.choice === bet.result) {
+    userBalances[userId] += bet.amount;
+  } else {
+    userBalances[userId] -= bet.amount;
+  }
+
   res.sendStatus(200);
 });
 
@@ -32,11 +43,12 @@ bot.on('web_app_data', (ctx) => {
   const result = bet.result;
   const choice = bet.choice;
   const amount = bet.amount;
+  const userBalance = userBalances[userId];
 
   if (choice === result) {
-    ctx.reply(`Выпало: ${result}. Ты выиграл ${amount} TON!`);
+    ctx.reply(`Выпало: ${result}. Ты выиграл ${amount} виртуальных монет! Текущий баланс: ${userBalance} виртуальных монет.`);
   } else {
-    ctx.reply(`Выпало: ${result}. Ты проиграл ${amount} TON.`);
+    ctx.reply(`Выпало: ${result}. Ты проиграл ${amount} виртуальных монет. Текущий баланс: ${userBalance} виртуальных монет.`);
   }
 });
 
