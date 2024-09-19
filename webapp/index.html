@@ -41,16 +41,18 @@
   <p id="result"></p>
 
   <script>
-    const flipButton = document.getElementById('flipButton');
-    const result = document.getElementById('result');
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const flipButton = document.getElementById('flipButton');
+      const result = document.getElementById('result');
 
-    flipButton.addEventListener('click', () => {
-      const flipResult = Math.random() < 0.5 ? 'Орёл' : 'Решка';
-      result.textContent = Выпало: ${flipResult};
-      Telegram.WebApp.sendData(flipResult);
+      flipButton.addEventListener('click', () => {
+        const flipResult = Math.random() < 0.5 ? 'Орёл' : 'Решка';
+        result.textContent = Выпало: ${flipResult};
+        Telegram.WebApp.sendData(flipResult);
+      });
+
+      Telegram.WebApp.ready();
     });
-
-    Telegram.WebApp.ready();
   </script>
 </body>
 </html>
