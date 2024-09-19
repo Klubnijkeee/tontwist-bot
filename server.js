@@ -2,7 +2,7 @@ const { Telegraf, Markup } = require('telegraf');
 const express = require('express');
 const path = require('path');
 const app = express();
-const bot = new Telegraf('YOUR_API_TOKEN');
+const bot = new Telegraf('8052531741:AAEgtrQtk8X_sNmpBItC9aOGyUR06k6Hq68');
 
 let userBets = {};
 
