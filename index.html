@@ -1,54 +1,63 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coin Flip</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      color: #333;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 {
-      color: #0088cc;
-    }
-    button {
-      background-color: #0088cc;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 5px;
-      margin-top: 20px;
-    }
-    button:hover {
-      background-color: #0077bb;
-    }
-    p {
-      font-size: 18px;
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра: Подбрось монетку</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Подбросить монетку11</h1>
-  <button id="flipButton">Подбросить</button>
-  <p id="result"></p>
+    <div class="container">
+        <h1>Подбрось монетку</h1>
+        <p>Угадай, что выпадет: Орел или Решка?</p>
+        <button class="button" onclick="flipCoin('орел')">Орел</button>
+        <button class="button" onclick="flipCoin('решка')">Решка</button>
+        <div class="result" id="result"></div>
+    </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-      const flipButton = document.getElementById('flipButton');
-      const result = document.getElementById('result');
+    <script>
+        function flipCoin(userGuess) {
+            const coinSides = ['орел', 'решка'];
+            const coinResult = coinSides[Math.floor(Math.random() * coinSides.length)];
+            const resultDiv = document.getElementById('result');
 
-      flipButton.addEventListener('click', () => {
-        const flipResult = Math.random() < 0.5 ? 'Орёл' : 'Решка';
-        result.textContent = Выпало: ${flipResult};
-      });
-    });
-  </script>
+            if (userGuess === coinResult) {
+                resultDiv.textContent = Ты угадал! Выпало: ${coinResult}.;
+            } else {
+                resultDiv.textContent = Не угадал. Выпало: ${coinResult}. Попробуй еще раз!;
+            }
+        }
+    </script>
 </body>
 </html>
